@@ -1,0 +1,21 @@
+#cloud-config
+ssh_authorized_keys:
+  - ssh-rsa ${ssh_pub_key}
+write_files:
+  - path: /etc/rc.local
+    permissions: "0755"
+    owner: root
+    content: |
+      #!/bin/bash
+      wait-for-docker
+      ${rancher_registration_command}
+rancher:
+  docker:
+    engine: ${docker_version}
+    log_driver: "json-file"
+    log_opts:
+      max-file: "3"
+      max-size: "100m"
+      labels: "production"
+  services_include:
+    kernel-headers: true

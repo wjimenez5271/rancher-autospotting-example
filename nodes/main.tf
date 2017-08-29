@@ -31,7 +31,7 @@ resource "aws_autoscaling_group" "autospot-asg" {
   min_size                  = 1
   health_check_grace_period = 300
   health_check_type         = "EC2"
-  desired_capacity          = 1
+  desired_capacity          = 4
   force_delete              = true
   launch_configuration      = "${aws_launch_configuration.autospot-asg-rancheros.name}"
   vpc_zone_identifier       = "${var.vpc_subnets}"
@@ -40,5 +40,11 @@ resource "aws_autoscaling_group" "autospot-asg" {
   key                 = "Name"
   value               = "autospot-nodes-${aws_launch_configuration.autospot-asg-rancheros.name}"
   propagate_at_launch = true
+  }
+
+  // Tag to enable autospotting
+  tag {
+  key                 = "spot-enabled"
+  value               = "true"
   }
 }

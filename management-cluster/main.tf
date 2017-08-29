@@ -16,7 +16,7 @@ data "template_file" "userdata-server" {
 resource "aws_launch_configuration" "autospot-asg-server-rancheros" {
   lifecycle { create_before_destroy = true }
   image_id      = "ami-7bba5a03"
-  instance_type = "t2.micro"
+  instance_type = "t2.large"
   key_name      = "william"
   security_groups = "${var.security_groups}"
   user_data     = "${data.template_file.userdata-server.rendered}"
@@ -26,7 +26,7 @@ resource "aws_autoscaling_group" "autospot-server-asg" {
   lifecycle { create_before_destroy = true }
   depends_on = ["aws_launch_configuration.autospot-asg-server-rancheros"]
   availability_zones        = ["us-west-2a"]
-  name                      = "autospot-server-${aws_launch_configuration.autospot-asg-rancheros.name}"
+  name                      = "autospot-server-${aws_launch_configuration.autospot-asg-server-rancheros.name}"
   max_size                  = 5
   min_size                  = 1
   health_check_grace_period = 300
@@ -38,7 +38,7 @@ resource "aws_autoscaling_group" "autospot-server-asg" {
 
   tag {
   key                 = "Name"
-  value               = "autospot-server-${aws_launch_configuration.autospot-asg-rancheros.name}"
+  value               = "autospot-server-${aws_launch_configuration.autospot-asg-server-rancheros.name}"
   propagate_at_launch = true
   }
 }
